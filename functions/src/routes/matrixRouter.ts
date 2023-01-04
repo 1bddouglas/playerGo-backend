@@ -9,12 +9,25 @@ const errorResponse = (error: any, res: any) => {
   res.status(500).json({ message: "Internal Server Error" });
 };
 
+// accessing the user suggested rules
 matrixRouter.get("/", async (req, res) => {
   try {
     const client = await getClient();
-    const cursor = client.db().collection<Rule>("user_rule_matrix").find();
+    const cursor = client.db().collection<Rule>("holding_collection").find();
     const results = await cursor.toArray();
     res.json(results);
+  } catch (err) {
+    errorResponse(err, res);
+  }
+});
+
+// adding a rule
+matrixRouter.post("/", async (req, res) => {
+  const newRule: Rule = req.body;
+  try {
+    const client = await getClient();
+    await client.db().collection<Rule>("holding_collection").insertOne(newRule);
+    res.status(201).json(newRule);
   } catch (err) {
     errorResponse(err, res);
   }
