@@ -21,7 +21,7 @@ matrixRouter.get("/", async (req, res) => {
   }
 });
 
-// adding a rule
+// adding a rule to the holding_collection collection in MongoDB
 matrixRouter.post("/", async (req, res) => {
   const newRule: Rule = req.body;
   try {
