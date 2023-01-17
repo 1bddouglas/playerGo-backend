@@ -1,4 +1,5 @@
 import express from "express";
+import { ObjectId } from "mongodb";
 import { getClient } from "../db";
 import Rule from "../models/Rule";
 
@@ -28,6 +29,24 @@ matrixRouter.post("/", async (req, res) => {
     const client = await getClient();
     await client.db().collection<Rule>("holding_collection").insertOne(newRule);
     res.status(201).json(newRule);
+  } catch (err) {
+    errorResponse(err, res);
+  }
+});
+
+matrixRouter.delete("/:id", async (req, res) => {
+  const idToDelete: string = req.params.id;
+  try {
+    const client = await getClient();
+    const result = await client
+      .db()
+      .collection<Rule>("holding_collection")
+      .deleteOne({ _id: new ObjectId(idToDelete) });
+    if (result.deletedCount) {
+      res.sendStatus(204);
+    } else {
+      res.status(404).json({ message: "rule not found" });
+    }
   } catch (err) {
     errorResponse(err, res);
   }
