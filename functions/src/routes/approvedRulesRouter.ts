@@ -9,6 +9,18 @@ const errorResponse = (error: any, res: any) => {
   res.status(500).json({ message: "Internal Server Error" });
 };
 
+// accessing approved rules for display
+approvedRulesRouter.get("/", async (req, res) => {
+  try {
+    const client = await getClient();
+    const cursor = client.db().collection<Rule>("approved_rules").find();
+    const results = await cursor.toArray();
+    res.json(results);
+  } catch (err) {
+    errorResponse(err, res);
+  }
+});
+
 // adding an approved rule to the approved_rules
 approvedRulesRouter.post("/", async (req, res) => {
   const newRule: Rule = req.body;
